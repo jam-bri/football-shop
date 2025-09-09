@@ -1,0 +1,12 @@
+from django.db import models
+
+class Product(models.Model):
+    name = models.CharField(max_length=200)       # item name
+    price = models.IntegerField()                  # item price
+    description = models.TextField()               # item description
+    thumbnail = models.URLField()                  # item image URL
+    category = models.CharField(max_length=100)    # item category
+    is_featured = models.BooleanField()            # featured status
+    stock = models.IntegerField()                  # item stock quantity
+    rating = models.FloatField()                   # item rating
+    
