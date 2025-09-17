@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Product Detail</h1>
+
+  <p><a class="btn" href="{% url 'main:show_main' %}">← Back to list</a></p>
+
+  <div style="display:flex; gap:1.5rem; align-items:flex-start;">
+    {% if product.thumbnail %}
+      <img src="{{ product.thumbnail }}" alt="{{ product.name }}" style="height:140px; width:auto; border:1px solid #ddd; padding:4px;">
+    {% endif %}
+    <div>
+      <h2>{{ product.name }}</h2>
+      <p><strong>Category:</strong> {{ product.category }}</p>
+      <p><strong>Price:</strong> {{ product.price }}</p>
+      <p><strong>Stock:</strong> {{ product.stock }}</p>
+      <p><strong>Featured:</strong> {{ product.is_featured|yesno:"Yes,No" }}</p>
+      <p><strong>Rating:</strong> {{ product.rating }}</p>
+      <p><strong>Description:</strong><br>{{ product.description }}</p>
+      <p>
+        <a class="btn" href="{% url 'main:show_json_by_id' product.pk %}">View JSON</a>
+        <a class="btn" href="{% url 'main:show_xml_by_id' product.pk %}">View XML</a>
+      </p>
+    </div>
+  </div>
+{% endblock content %}

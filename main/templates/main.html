@@ -1,5 +1,68 @@
-<h1>Football Shop</h1>
-<p>Application Name: {{ application_name }}</p>
-<p>NPM: {{ npm }}</p>
-<p>Name: {{ name }}</p>
-<p>Class: {{ class }}</p>
+{% extends 'base.html' %}
+{% block content %}
+  <h1 style="text-align:center; font-size:2.5rem; margin-bottom:1rem;">
+    Football Shop - Crampons Etoiles
+  </h1>
+
+  <div style="
+      background-color:#fff8cc; 
+      padding:1rem 2rem; 
+      border-radius:12px; 
+      max-width:400px; 
+      margin:0 auto 1.5rem auto; 
+      text-align:center;
+    ">
+    <p>Application Name: {{ application_name }}</p>
+    <p>NPM: {{ npm }}</p>
+    <p>Name: {{ name }}</p>
+    <p>Class: {{ class }}</p>
+  </div>
+
+  <p>
+    <a class="btn btn-primary" href="{% url 'main:create_product' %}">Add Product</a>
+  </p>
+
+  <hr>
+
+
+  {% if products %}
+     <table style="width:100%; border-collapse:collapse; text-align:center;">
+    <thead>
+      <tr style="background:#f5f5f5;">
+        <th style="width:120px;">Image</th>
+        <th style="width:20%;">Name</th>
+        <th style="width:15%;">Category</th>
+        <th style="width:10%;">Price</th>
+        <th style="width:10%;">Stock</th>
+        <th style="width:10%;">Featured</th>
+        <th style="width:10%;">Rating</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for p in products %}
+      <tr>
+        <td style="padding:8px;">
+          {% if p.thumbnail %}
+            <img src="{{ p.thumbnail }}" alt="{{ p.name }}" 
+                 style="height:100px; width:auto; border:1px solid #ddd; border-radius:6px;">
+          {% else %}
+            <span>No image</span>
+          {% endif %}
+        </td>
+        <td style="padding:8px;">{{ p.name }}</td>
+        <td style="padding:8px;">{{ p.category }}</td>
+        <td style="padding:8px;">{{ p.price }} €</td>
+        <td style="padding:8px;">{{ p.stock }}</td>
+        <td style="padding:8px;">{{ p.is_featured|yesno:"Yes,No" }}</td>
+        <td style="padding:8px;">{{ p.rating }}</td>
+        <td>
+            <a class="btn" href="{% url 'main:product_detail' p.pk %}">Detail</a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No products yet.</p>
+  {% endif %}
+{% endblock content %}

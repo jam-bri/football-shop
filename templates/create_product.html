@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Add Product</h1>
+  <form method="POST">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+    </table>
+    <p><input class="btn btn-primary" type="submit" value="Save" /></p>
+  </form>
+  <p><a class="btn" href="{% url 'main:show_main' %}">← Back to list</a></p>
+{% endblock content %}
