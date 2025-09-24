@@ -19,11 +19,30 @@
   </div>
 
   <p>
-    <a class="btn btn-primary" href="{% url 'main:create_product' %}">Add Product</a>
+    <a class="btn btn-primary" href="{% url 'main:create_product' %}">
+      <button> Add product</button>
+    </a>
   </p>
+<hr>
 
-  <hr>
+<h5>Last login session: {{ last_login }}</h5>
+{% if request.user.is_authenticated %}
+    <h5>Username: {{ request.user.username }}</h5>
+{% else %}
+    <h5>Username: Anonymous</h5>
+{% endif %}
+<a href="{% url 'main:logout' %}">
+  <button>Logout</button>
+</a>
 
+<hr>
+<a href="?filter=all">
+    <button type="button">All Articles</button>
+</a>
+<a href="?filter=my">
+    <button type="button">My Articles</button>
+</a> 
+<hr>
 
   {% if products %}
      <table style="width:100%; border-collapse:collapse; text-align:center;">
@@ -43,10 +62,9 @@
       <tr>
         <td style="padding:8px;">
           {% if p.thumbnail %}
-            <img src="{{ p.thumbnail }}" alt="{{ p.name }}" 
-                 style="height:100px; width:auto; border:1px solid #ddd; border-radius:6px;">
+            <img src="{{ p.thumbnail }}" alt="{{ p.name }}" style="height:140px; width:auto;">
           {% else %}
-            <span>No image</span>
+            <span>No image available</span>
           {% endif %}
         </td>
         <td style="padding:8px;">{{ p.name }}</td>
@@ -56,7 +74,9 @@
         <td style="padding:8px;">{{ p.is_featured|yesno:"Yes,No" }}</td>
         <td style="padding:8px;">{{ p.rating }}</td>
         <td>
-            <a class="btn" href="{% url 'main:product_detail' p.pk %}">Detail</a>
+            <a class="btn" href="{% url 'main:product_detail' p.pk %}">
+              <button>Detail</button>
+            </a>
           </td>
         </tr>
       {% endfor %}

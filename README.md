@@ -115,3 +115,36 @@ XML_ID
 
 ![alt text](<img/json_id.png>)
 JSON_ID
+
+--- 
+## A4 - 24/09
+
+
+### What is Django's AuthenticationForm? Explain its advantages and disadvantages.
+
+`AuthenticationForm` is provided by Django for login.  
+It validates username and password with `authenticate()`.  
+You can call `form.get_user()` and pass it to `login()`.  
+**Advantages:** quick, secure, integrates with Django’s auth.  
+**Disadvantages:** username/password only by default; no MFA/rate limiting; needs subclassing for email login.
+
+### What is the difference between authentication and authorization? How does Django implement the two concepts?
+Authentication means proving who you are.  
+Authorization means checking what you are allowed to do.  
+Django handles authentication with the `User` model, `authenticate()`, `login()`, and auth backends.  
+It handles authorization with permissions, groups, `@login_required`, and mixins like `PermissionRequiredMixin`.  
+
+### What are the benefits and drawbacks of using sessions and cookies in storing the state of a web application?
+Sessions store data on the server and keep only an id in the cookie.They are secure and revocable but need storage and scaling support.  
+Cookies store data on the client side.They are lightweight and stateless but limited in size and readable unless encrypted.  
+
+### In web development, is the usage of cookies secure by default, or is there any potential risk that we should be aware of? How does Django handle this problem?
+Cookies are not secure by default because they can be stolen by XSS, intercepted over HTTP, or misused for CSRF.  
+To hangdle this problem, always set the `Secure`, `HttpOnly`, and `SameSite` flags.  
+Django adds CSRF middleware, signs cookies, rotates session keys on login, and provides secure settings like `SESSION_COOKIE_SECURE`.  
+
+### Explain how you implemented the checklist above step-by-step (not just following the tutorial).
+I implemented this project by first reading the tutorial thoroughly and making sure I understood each concept that was explained.  
+The tutorial introduced authentication, sessions, and cookies, so I took notes on how each one works in Django.  
+With this understanding, I created a small plan based on the checklist provided.  
+By following this process step by step, I was able to satisfy the checklist while also making sure I really understood how each concept fits into Django’s authentication system.  
