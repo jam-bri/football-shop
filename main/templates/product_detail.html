@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>{{ product.name }} — Crampons Étoiles</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 px-6 py-10 flex justify-center">
+  <div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-12">
+
+    <!-- Product Image -->
+    <div class="flex items-center justify-center bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+      {% if product.thumbnail %}
+        <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="w-full h-auto object-contain rounded-lg">
+      {% else %}
+        <div class="text-slate-400">No image available</div>
+      {% endif %}
+    </div>
+
+    <!-- Product Info -->
+    <div class="flex flex-col justify-between">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900">
+          {{ product.name }}
+        </h1>
+        <p class="mt-2 text-lg text-slate-600">{{ product.category }}</p>
+
+        <!-- Price -->
+        <div class="mt-4 text-2xl font-bold text-yellow-600">
+          ${{ product.price }}
+        </div>
+
+        <!-- Stock + Rating -->
+        <div class="mt-4 flex items-center gap-6 text-slate-600">
+          <span><strong>Stock:</strong> {{ product.stock }}</span>
+          <span><strong>Featured:</strong> {{ product.is_featured|yesno:"Yes,No" }}</span>
+          <span><strong>Rating:</strong> ⭐ {{ product.rating }}</span>
+        </div>
+
+        <!-- Description -->
+        <div class="mt-6 text-slate-700 leading-relaxed">
+          {{ product.description }}
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="mt-8 flex gap-4">
+        <a href="{% url 'main:show_main' %}" 
+           class="px-6 py-3 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition">
+          ← Back to list
+        </a>
+
+        {% if user.is_authenticated and product.owner == user %}
+          <a href="{% url 'main:edit_product' product.pk %}" 
+             class="px-6 py-3 rounded-md bg-yellow-500 text-white font-semibold hover:bg-yellow-600 active:bg-yellow-700 transition">
+            Edit
+          </a>
+          <a href="{% url 'main:delete_product' product.pk %}" 
+             class="px-6 py-3 rounded-md border border-red-300 text-red-600 hover:bg-red-50 transition">
+            Delete
+          </a>
+        {% endif %}
+      </div>
+
+      <!-- Author -->
+      <p class="mt-6 text-sm text-slate-500">
+        Author: 
+        {% if product.user %}
+          {{ product.user.username }}
+        {% else %}
+          Anonymous
+        {% endif %}
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock content %}

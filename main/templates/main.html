@@ -1,88 +1,77 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<title>Crampons Étoiles — Shop</title>
+{% endblock meta %}
+
 {% block content %}
-  <h1 style="text-align:center; font-size:2.5rem; margin-bottom:1rem;">
-    Football Shop - Crampons Etoiles
-  </h1>
+{% include 'navbar.html' %}
+<div class="bg-slate-50 w-full pt-16 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-  <div style="
-      background-color:#fff8cc; 
-      padding:1rem 2rem; 
-      border-radius:12px; 
-      max-width:400px; 
-      margin:0 auto 1.5rem auto; 
-      text-align:center;
-    ">
-    <p>Application Name: {{ application_name }}</p>
-    <p>NPM: {{ npm }}</p>
-    <p>Name: {{ name }}</p>
-    <p>Class: {{ class }}</p>
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-extrabold text-slate-900 mb-2">
+        <span class="inline-flex items-center">
+          Crampons <span class="mx-1 text-sm text-yellow-500">⭐</span> Étoiles
+        </span>
+      </h1>
+      <p class="text-slate-600">Performance gear and artist editions</p>
+    </div>
+
+    <!-- Filters / Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-white rounded-xl border border-slate-200 p-4">
+      <div class="flex gap-3 mb-4 sm:mb-0">
+        <a href="?"
+           class="px-4 py-2 rounded-md font-medium transition
+                  {% if request.GET.filter == 'all' or not request.GET.filter %} bg-yellow-500 text-white hover:bg-yellow-600
+                  {% else %} bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 {% endif %}">
+          All Products
+        </a>
+        <a href="?filter=my"
+           class="px-4 py-2 rounded-md font-medium transition
+                  {% if request.GET.filter == 'my' %} bg-yellow-500 text-white hover:bg-yellow-600
+                  {% else %} bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 {% endif %}">
+          My Products
+        </a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="{% url 'main:create_product' %}"
+           class="inline-flex items-center px-4 py-2 rounded-md bg-slate-900 text-white hover:bg-slate-800 transition">
+          Add product
+        </a>
+        {% if user.is_authenticated and last_login %}
+          <div class="text-sm text-slate-500">
+            Last login: {{ last_login }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    {% if not products %}
+      <div class="bg-white rounded-xl border border-slate-200 p-12 text-center">
+        <div class="w-36 h-36 mx-auto mb-4 opacity-80">
+          <img src="{% static 'image/no-news.png' %}" alt="No products" class="w-full h-full object-contain">
+        </div>
+        <h3 class="text-lg font-semibold text-slate-900 mb-2">No products yet</h3>
+        <p class="text-slate-500 mb-6">Add your first item to the Crampons Étoiles shop.</p>
+        <a href="{% url 'main:create_product' %}"
+           class="inline-flex items-center px-4 py-2 rounded-md bg-yellow-500 text-white hover:bg-yellow-600 transition">
+          Create Product
+        </a>
+      </div>
+
+    {% else %}
+      <!-- Product grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for p in products %}
+          {% include 'card_product.html' with product=p %}
+        {% endfor %}
+      </div>
+    {% endif %}
   </div>
-
-  <p>
-    <a class="btn btn-primary" href="{% url 'main:create_product' %}">
-      <button> Add product</button>
-    </a>
-  </p>
-<hr>
-
-<h5>Last login session: {{ last_login }}</h5>
-{% if request.user.is_authenticated %}
-    <h5>Username: {{ request.user.username }}</h5>
-{% else %}
-    <h5>Username: Anonymous</h5>
-{% endif %}
-<a href="{% url 'main:logout' %}">
-  <button>Logout</button>
-</a>
-
-<hr>
-<a href="?filter=all">
-    <button type="button">All Articles</button>
-</a>
-<a href="?filter=my">
-    <button type="button">My Articles</button>
-</a> 
-<hr>
-
-  {% if products %}
-     <table style="width:100%; border-collapse:collapse; text-align:center;">
-    <thead>
-      <tr style="background:#f5f5f5;">
-        <th style="width:120px;">Image</th>
-        <th style="width:20%;">Name</th>
-        <th style="width:15%;">Category</th>
-        <th style="width:10%;">Price</th>
-        <th style="width:10%;">Stock</th>
-        <th style="width:10%;">Featured</th>
-        <th style="width:10%;">Rating</th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for p in products %}
-      <tr>
-        <td style="padding:8px;">
-          {% if p.thumbnail %}
-            <img src="{{ p.thumbnail }}" alt="{{ p.name }}" style="height:140px; width:auto;">
-          {% else %}
-            <span>No image available</span>
-          {% endif %}
-        </td>
-        <td style="padding:8px;">{{ p.name }}</td>
-        <td style="padding:8px;">{{ p.category }}</td>
-        <td style="padding:8px;">{{ p.price }} €</td>
-        <td style="padding:8px;">{{ p.stock }}</td>
-        <td style="padding:8px;">{{ p.is_featured|yesno:"Yes,No" }}</td>
-        <td style="padding:8px;">{{ p.rating }}</td>
-        <td>
-            <a class="btn" href="{% url 'main:product_detail' p.pk %}">
-              <button>Detail</button>
-            </a>
-          </td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>No products yet.</p>
-  {% endif %}
+</div>
 {% endblock content %}
