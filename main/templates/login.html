@@ -5,6 +5,7 @@
 {% endblock meta %}
 
 {% block content %}
+{% include 'toast.html' %}
 <div class="min-h-screen w-full bg-slate-50 flex items-center justify-center p-8">
   <div class="w-full max-w-md">
     <div class="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-sm form-style">
@@ -110,4 +111,41 @@
     </div>
   </div>
 </div>
+<script>
+  function getCSRF() {
+    const m = document.cookie.split('; ').find(r => r.startsWith('csrftoken='));
+    return m ? m.split('=')[1] : '';
+  }
+
+  document.querySelector("form").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const username = e.target.username.value;
+    const password = e.target.password.value;
+
+    try{
+      const r = await fetch("{% url 'main:api_login' %}", {
+        method: "POST",
+        credentials: "same-origin", // ensure cookies (csrftoken) are sent
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCSRF(),
+        },
+        body: JSON.stringify({ username, password })
+      });
+      const j = await r.json();
+      if (!j.ok) throw new Error(j.error || "Login failed");
+
+      showToast("Welcome back!", `Hi ${j.username}!`, "success");
+
+      // give the toast ~1s to show before navigating
+      setTimeout(() => {
+        window.location.href = "{% url 'main:show_main' %}";
+      }, 900);
+
+    } catch (err) {
+      showToast("Login failed", err.message || "Invalid username or password.", "error");
+    }
+  });
+</script>
+
 {% endblock content %}

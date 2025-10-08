@@ -121,4 +121,46 @@
     </div>
   </div>
 </div>
+<script>
+  // Local CSRF helper (only needed if you didn't add the global one in base.html)
+  function getCSRF() {
+    const m = document.cookie.split('; ').find(s => s.startsWith('csrftoken='));
+    return m ? m.split('=')[1] : '';
+  }
+
+  document.querySelector("form").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    const username = e.target.username.value;
+    const p1 = e.target.password1.value;
+    const p2 = e.target.password2.value;
+
+    if (p1 !== p2) {
+      showToast("Error", "Passwords do not match.", "error");
+      return;
+    }
+
+    try{
+      const r = await fetch("{% url 'main:api_register' %}", {
+        method: "POST",
+        credentials: "same-origin", // ensure csrftoken cookie is sent
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCSRF(),
+        },
+        body: JSON.stringify({ username, password: p1 })
+      });
+      const j = await r.json();
+      if (!j.ok) throw new Error(j.error || "Registration failed");
+
+      showToast("Account created", "You can now log in!", "success");
+
+      setTimeout(() => {
+        window.location.href = "{% url 'main:login' %}";
+      }, 900);
+
+    } catch(err) {
+      showToast("Error", err.message || "Registration failed. Please try again.", "error");
+    }
+  });
+</script>
 {% endblock content %}

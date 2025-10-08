@@ -22,7 +22,7 @@
               <div class="text-sm font-medium text-gray-900">{{ name|default:user.username }}</div>
               <div class="text-xs text-gray-500">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
             </div>
-            <a href="{% url 'main:logout' %}" class="text-red-600 hover:text-red-700 font-medium transition-colors">
+            <a id="btn-logout-desktop" href="{% url 'main:logout' %}" class="text-red-600 hover:text-red-700 font-medium transition-colors">
               Logout
             </a>
           {% else %}
@@ -66,7 +66,7 @@
               <div class="font-medium text-gray-900">{{ name|default:user.username }}</div>
               <div class="text-sm text-gray-500">{{ npm|default:"Student" }} - {{ class|default:"Class" }}</div>
             </div>
-            <a href="{% url 'main:logout' %}" class="block text-red-600 hover:text-red-700 font-medium py-3 transition-colors">
+            <a id="btn-logout-mobile" href="{% url 'main:logout' %}" class="block text-red-600 hover:text-red-700 font-medium py-3 transition-colors">
               Logout
             </a>
           {% else %}
@@ -82,12 +82,46 @@
         </div>
       </div>
     </div>
-    <script>
-      const btn = document.querySelector("button.mobile-menu-button");
-      const menu = document.querySelector(".mobile-menu");
-    
-      btn.addEventListener("click", () => {
-        menu.classList.toggle("hidden");
+
+<script>
+  function getCSRF() {
+    const m = document.cookie.split(";").map(s=>s.trim()).find(s=>s.startsWith("csrftoken="));
+    return m ? m.split("=")[1] : "";
+  }
+
+  async function ajaxLogout(e) {
+    e.preventDefault(); // Prevent default link behavior
+    try {
+      const r = await fetch("{% url 'main:api_logout' %}", {
+        method: "POST",
+        headers: {"X-CSRFToken": getCSRF()},
       });
-    </script>
-  </nav>
+      const j = await r.json();
+      if (!j.ok) throw new Error(j.error || "Logout failed");
+
+      showToast("Logged out", "See you soon!", "success");
+      setTimeout(() => {
+        window.location.href = "{% url 'main:login' %}";
+      }, 1000);
+
+    } catch (err) {
+      showToast("Error", err.message || "Logout failed. Please try again.", "error");
+    }
+  }
+
+  // Add event listeners to both logout buttons
+  const desktopLogout = document.getElementById("btn-logout-desktop");
+  const mobileLogout = document.getElementById("btn-logout-mobile");
+  
+  if (desktopLogout) desktopLogout.addEventListener("click", ajaxLogout);
+  if (mobileLogout) mobileLogout.addEventListener("click", ajaxLogout);
+
+  // Mobile menu toggle
+  const btn = document.querySelector("button.mobile-menu-button");
+  const menu = document.querySelector(".mobile-menu");
+  
+  btn?.addEventListener("click", () => {
+    menu.classList.toggle("hidden");
+  });
+</script>
+</nav>

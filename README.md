@@ -269,3 +269,44 @@ Grid layout is a two-dimensional system. It allows you to arrange items into row
    Used `URLField` thumbnails for speed; template falls back to “No image” if empty.
 
 **Result:** A responsive, branded shop for **Crampons Étoiles** with a catalog UI that feels like a real store.
+
+--
+## A6 - 08/10
+
+### What is the difference between synchronous request and asynchronous request?
+
+- **Synchronous request:** The browser must wait for the server to respond before continuing. This means the page becomes unresponsive until the process is done, creating the classic *“click–wait–refresh”* experience.  
+- **Asynchronous request:** The browser can continue executing other tasks while waiting for the server’s response. AJAX uses this approach, allowing parts of a web page to update dynamically without reloading the entire page.
+
+### How does AJAX work in Django (request–response flow)?
+
+1. **Event Trigger:** A user action (like clicking a button or submitting a form) triggers JavaScript code.  
+2. **AJAX Request:** JavaScript (using `fetch` or `XMLHttpRequest`) sends data to a Django view URL, typically under `/api/`.  
+3. **Django View:** The view processes the request and returns a JSON or HTML response.  
+4. **Server Response:** The server sends back the response asynchronously.  
+5. **DOM Update:** JavaScript receives the response and updates only the necessary parts of the web page — no full reload needed.
+
+This allows Django and JavaScript to communicate smoothly, improving responsiveness and performance.
+
+### What are the advantages of using AJAX compared to regular rendering in Django?
+
+-  **Faster performance:** Only small parts of the page are updated.  
+-  **Better user experience:** No full page reloads, resulting in smoother interaction.  
+-  **Reduced server load:** Less data is sent and received.  
+-  **Real-time features:** Enables instant updates for chat, search, or notifications.  
+-  **Event-driven design:** Updates triggered by user actions, not page reloads.
+
+### How do you ensure security when using AJAX for Login and Register features in Django?
+
+To protect AJAX-based authentication endpoints:
+
+1. **Use Django’s CSRF protection:** Include the CSRF token in AJAX headers.  
+   ```javascript
+   headers: { 'X-CSRFToken': getCookie('csrftoken') }
+2. Validate and sanitize input: Never trust client-side data — validate on the server.
+
+3. Use HTTPS: Encrypts credentials and sensitive data.
+
+4. Escape output: Prevents Cross-Site Scripting (XSS) attacks.
+
+5. Avoid sensitive info in JSON responses: Don’t return debug or system data.
