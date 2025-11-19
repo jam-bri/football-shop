@@ -1,5 +1,5 @@
 from django.urls import path
-from main.views import show_main, create_product, product_detail, show_xml, show_json, show_xml_by_id, show_json_by_id, register, login_user, logout_user, edit_product, delete_product,api_products, api_product_detail, api_login, api_logout, api_register
+from main.views import show_main, create_product, product_detail, show_xml, show_json, show_xml_by_id, show_json_by_id, register, login_user, logout_user, edit_product,delete_product,api_products, api_product_detail, api_login, api_logout, api_register, proxy_image, create_product_flutter, my_products
 
 app_name = 'main'
 
@@ -22,5 +22,9 @@ urlpatterns = [
     path('api/auth/login/', api_login, name='api_login'),
     path('api/auth/logout/', api_logout, name='api_logout'),
     path('api/auth/register/', api_register, name='api_register'),
-    
+
+    path('proxy-image/', proxy_image, name='proxy_image'),
+    path('create-flutter/', create_product_flutter, name='create_product_flutter'),
+    path("my-products/", my_products, name="my_products"),
+
 ]

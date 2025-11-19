@@ -26,6 +26,11 @@ from django.contrib.auth import authenticate
 import json
 from django.contrib.auth.models import User
 
+import requests
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.html import strip_tags
+import json
+from django.http import JsonResponse
 
 
 @login_required(login_url='/login')
@@ -268,3 +273,64 @@ def api_register(request):
         return JsonResponse({"ok": True, "username": u.username}, status=201)
     except Exception as e:
         return JsonResponse({"ok": False, "error": str(e)}, status=400)
+    
+def proxy_image(request):
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
+    
+    try:
+        # Fetch image from external source
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        
+        # Return the image with proper content type
+        return HttpResponse(
+            response.content,
+            content_type=response.headers.get('Content-Type', 'image/jpeg')
+        )
+    except requests.RequestException as e:
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        name = strip_tags(data.get("name", ""))
+        price = data.get("price", 0)
+        description = strip_tags(data.get("description", ""))
+        category = strip_tags(data.get("category", ""))
+        thumbnail = data.get("thumbnail", "")
+        is_featured = data.get("is_featured", False)
+        stock = data.get("stock", 0)
+        rating = data.get("rating", 0.0)
+
+        # Logged in user (from session cookie)
+        user = request.user
+
+        new_product = Product(
+            name=name,
+            price=price,
+            description=description,
+            category=category,
+            thumbnail=thumbnail,
+            is_featured=is_featured,
+            stock=stock,
+            rating=rating,
+            user=user,
+        )
+        new_product.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+
+    return JsonResponse({"status": "error"}, status=401)
+
+@csrf_exempt
+@login_required
+def my_products(request):
+    products = Product.objects.filter(user=request.user)
+    return JsonResponse(
+        list(products.values()),
+        safe=False
+    )
